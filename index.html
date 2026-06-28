@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Historias del CAR</title>
+    <style>
+        /* ===== RESET Y BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5efe6; /* Fondo crema como en tu imagen */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* ===== ENCABEZADO ===== */
+        .header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            background: transparent;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #1a3b5d;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header h1 span {
+            color: #FFB800; /* Amarillo CFE */
+        }
+
+        .header .subtitulo {
+            font-size: 1.2em;
+            color: #5a6a7a;
+            margin-top: 5px;
+            font-style: italic;
+            background: rgba(255, 184, 0, 0.15);
+            display: inline-block;
+            padding: 4px 20px;
+            border-radius: 30px;
+        }
+
+        /* ===== BOTÓN SUBIR HISTORIA ===== */
+        .btn-subir {
+            display: inline-block;
+            background: #1a3b5d;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0 30px;
+            box-shadow: 0 4px 15px rgba(26, 59, 93, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-subir:hover {
+            background: #FFB800;
+            color: #1a3b5d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 184, 0, 0.4);
+        }
+
+        .btn-subir.secundario {
+            background: #e5e7eb;
+            color: #1a3b5d;
+            box-shadow: none;
+            padding: 10px 25px;
+            font-size: 0.95em;
+            margin: 10px 0;
+        }
+
+        .btn-subir.secundario:hover {
+            background: #d1d5db;
+            transform: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* ===== TARJETAS (RECUADROS) ===== */
+        .tarjeta {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid #FFB800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tarjeta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .tarjeta .titulo {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #1a3b5d;
+            margin-bottom: 10px;
+        }
+
+        .tarjeta .titulo .hashtag {
+            color: #FFB800;
+        }
+
+        .tarjeta .contenido {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .tarjeta .contenido .leer-mas {
+            color: #1a3b5d;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .tarjeta .autor {
+            font-size: 0.95em;
+            color: #6b7280;
+            font-weight: 600;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 12px;
+            margin-top: 5px;
+        }
+
+        .tarjeta .autor::before {
+            content: "✍️ ";
+        }
+
+        /* ===== FORMULARIO ===== */
+        .formulario {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid #FFB800;
+        }
+
+        .formulario h2 {
+            color: #1a3b5d;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .formulario label {
+            display: block;
+            font-weight: 600;
+            color: #1a3b5d;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .formulario input,
+        .formulario textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+            background: #fafafa;
+        }
+
+        .formulario input:focus,
+        .formulario textarea:focus {
+            outline: none;
+            border-color: #FFB800;
+            background: white;
+        }
+
+        .formulario textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .formulario .btn-publicar {
+            background: #FFB800;
+            color: #1a3b5d;
+            font-weight: 700;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
+            width: 100%;
+        }
+
+        .formulario .btn-publicar:hover {
+            background: #1a3b5d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(26, 59, 93, 0.3);
+        }
+
+        .mensaje {
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .mensaje.exito {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+        }
+
+        .mensaje.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+
+        /* ===== OCULTAR/MOSTRAR VISTAS ===== */
+        .vista {
+            display: none;
+        }
+
+        .vista.activa {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header .subtitulo {
+                font-size: 1em;
+            }
+
+            .tarjeta {
+                padding: 18px 20px;
+            }
+
+            .tarjeta .titulo {
+                font-size: 1.2em;
+            }
+
+            .tarjeta .contenido {
+                font-size: 0.95em;
+            }
+
+            .formulario {
+                padding: 20px;
+            }
+
+            .btn-subir {
+                padding: 12px 25px;
+                font-size: 1em;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ========================================== -->
+        <!-- ===== VISTA 1: GALERÍA ===== -->
+        <!-- ========================================== -->
+        <div id="vistaGaleria" class="vista activa">
+
+            <!-- ENCABEZADO -->
+            <div class="header">
+                <h1>📖 Historias del <span>CAR</span></h1>
+                <div class="subtitulo">Tu historia merece ser contada, anécdota</div>
+                <div class="text-center">
+                    <button class="btn-subir" onclick="mostrarVista('formulario')">
+                        ✍️ Sube tu historia
+                    </button>
+                </div>
+            </div>
+
+            <!-- LISTA DE HISTORIAS -->
+            <div id="listaHistorias">
+
+                <!-- Tarjeta 1 -->
+                <div class="tarjeta">
+                    <div class="titulo"><span class="hashtag">#</span>ClienteInfluyente</div>
+                    <div class="contenido">
+                        Hace algún tiempo me llamó un cliente de Valle de Bravo, me comentó que personal de CFE había derribado parte de su barda al hacer trabajos de reparación, quería reportar para que le repararan el daño. Le comenté el procedimiento para reportarlo en el CAC y le generé un folio.
+                        <span class="leer-mas">... Leer más</span>
+                    </div>
+                    <div class="autor">Yrak Emilio</div>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="tarjeta">
+                    <div class="titulo"><span class="hashtag">#</span>ElApagónDivertido</div>
+                    <div class="contenido">
+                        Estaba atendiendo una llamada cuando de repente se fue la luz en toda la colonia. La señora del otro lado me dice: "¡Ay, joven, hasta el teléfono se me apagó!" Tuvimos que explicarle que los teléfonos no usan la luz de la casa...
+                        <span class="leer-mas">... Leer más</span>
+                    </div>
+                    <div class="autor">María Pérez</div>
+                </div>
+
+                <!-- Tarjeta 3 -->
+                <div class="tarjeta">
+                    <div class="titulo"><span class="hashtag">#</span>LaSeñoraDeLasVelas</div>
+                    <div class="contenido">
+                        Una usuaria llamó muy preocupada porque se había ido la luz y no sabía cómo iba a cargar su celular para seguir viendo sus novelas. Le sugerí que usara velas para alumbrarse y me dijo: "Pero joven, ¿y el celular?"
+                        <span class="leer-mas">... Leer más</span>
+                    </div>
+                    <div class="autor">Carlos Ruiz</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ===== VISTA 2: FORMULARIO ===== -->
+        <!-- ========================================== -->
+        <div id="vistaFormulario" class="vista">
+
+            <div class="formulario">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h2>✍️ Comparte tu anécdota</h2>
+                    <button class="btn-subir secundario" onclick="mostrarVista('galeria')">
+                        ← Volver
+                    </button>
+                </div>
+
+                <form id="formHistoria">
+                    <label for="titulo">📌 Título</label>
+                    <input type="text" id="titulo" placeholder="Ej: El cliente influyente" required />
+
+                    <label for="autor">✍️ Tu nombre</label>
+                    <input type="text" id="autor" placeholder="Ej: Yrak Emilio" required />
+
+                    <label for="historia">📖 Tu historia</label>
+                    <textarea id="historia" placeholder="Escribe aquí tu anécdota..." required></textarea>
+
+                    <button type="submit" class="btn-publicar">
+                        📤 Publicar historia
+                    </button>
+                </form>
+
+                <div id="mensaje" class="mensaje"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // =============================================
+        // FUNCIÓN PARA CAMBIAR ENTRE VISTAS
+        // =============================================
+        function mostrarVista(vista) {
+            // Ocultar ambas
+            document.getElementById('vistaGaleria').classList.remove('activa');
+            document.getElementById('vistaFormulario').classList.remove('activa');
+            // Mostrar la seleccionada
+            document.getElementById('vista' + vista.charAt(0).toUpperCase() + vista.slice(1)).classList.add('activa');
+
+            // Si volvemos a la galería, recargar historias (opcional)
+            if (vista === 'galeria') {
+                // Aquí después cargarías las historias desde Sheets
+                console.log('Volviendo a la galería');
+            }
+        }
+
+        // =============================================
+        // ENVÍO DEL FORMULARIO
+        // =============================================
+        document.getElementById('formHistoria').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const titulo = document.getElementById('titulo').value.trim();
+            const autor = document.getElementById('autor').value.trim();
+            const historia = document.getElementById('historia').value.trim();
+
+            const mensajeDiv = document.getElementById('mensaje');
+
+            // Validar que no estén vacíos
+            if (!titulo || !autor || !historia) {
+                mensajeDiv.className = 'mensaje error';
+                mensajeDiv.textContent = '❌ Todos los campos son obligatorios.';
+                return;
+            }
+
+            mensajeDiv.className = 'mensaje';
+            mensajeDiv.textContent = '⏳ Publicando...';
+            mensajeDiv.style.display = 'block';
+
+            // DATOS PARA ENVIAR
+            const datos = {
+                titulo: titulo,
+                autor: autor,
+                historia: historia
+            };
+
+            // 🔽 CAMBIA ESTA URL POR LA DE TU WEB APP CUANDO LA TENGAS
+            const WEBAPP_URL = 'https://script.google.com/macros/s/TU_ID_AQUI/exec';
+
+            fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                })
+                .then(() => {
+                    mensajeDiv.className = 'mensaje exito';
+                    mensajeDiv.textContent = '✅ ¡Historia publicada con éxito! Gracias por compartir.';
+                    document.getElementById('formHistoria').reset();
+
+                    // Opcional: después de 3 segundos redirige a la galería
+                    setTimeout(() => {
+                        mostrarVista('galeria');
+                        mensajeDiv.style.display = 'none';
+                    }, 3000);
+                })
+                .catch(() => {
+                    mensajeDiv.className = 'mensaje error';
+                    mensajeDiv.textContent = '❌ Error al publicar. Intenta de nuevo.';
+                });
+        });
+    </script>
+
+</body>
+</html>
