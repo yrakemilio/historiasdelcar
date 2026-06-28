@@ -1,8 +1,3 @@
-
-Yrak Elizalde <yrakemilio@gmail.com>
-17:45 (hace 0 minutos)
-para mí
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,35 +10,29 @@ para mí
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5efe6;
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 750px;
             margin: 0 auto;
         }
-
         .header {
             text-align: center;
             padding: 30px 20px 20px;
         }
-
         .header h1 {
             font-size: 2.8em;
             font-weight: 700;
             color: #1a3b5d;
             letter-spacing: -1px;
         }
-
         .header h1 span {
             color: #FFB800;
         }
-
         .header .subtitulo {
             font-size: 1.2em;
             color: #5a6a7a;
@@ -54,7 +43,6 @@ para mí
             padding: 4px 20px;
             border-radius: 30px;
         }
-
         .btn-subir {
             display: inline-block;
             background: #1a3b5d;
@@ -69,14 +57,12 @@ para mí
             margin: 20px 0 30px;
             box-shadow: 0 4px 15px rgba(26, 59, 93, 0.3);
         }
-
         .btn-subir:hover {
             background: #FFB800;
             color: #1a3b5d;
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(255, 184, 0, 0.4);
         }
-
         .btn-subir.secundario {
             background: #e5e7eb;
             color: #1a3b5d;
@@ -85,16 +71,13 @@ para mí
             font-size: 0.95em;
             margin: 10px 0;
         }
-
         .btn-subir.secundario:hover {
             background: #d1d5db;
             transform: none;
         }
-
         .text-center {
             text-align: center;
         }
-
         .tarjeta {
             background: #ffffff;
             border-radius: 16px;
@@ -104,30 +87,25 @@ para mí
             border-left: 6px solid #FFB800;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .tarjeta:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
-
         .tarjeta .titulo {
             font-size: 1.6em;
             font-weight: 700;
             color: #1a3b5d;
             margin-bottom: 10px;
         }
-
         .tarjeta .titulo .hashtag {
             color: #FFB800;
         }
-
         .tarjeta .contenido {
             font-size: 1.05em;
             line-height: 1.7;
             color: #374151;
             margin-bottom: 8px;
         }
-
         .tarjeta .autor {
             font-size: 0.95em;
             color: #6b7280;
@@ -136,17 +114,14 @@ para mí
             padding-top: 12px;
             margin-top: 5px;
         }
-
         .tarjeta .autor::before {
             content: "✍️ ";
         }
-
         .tarjeta .year {
             font-size: 0.85em;
             color: #9ca3af;
             margin-top: 4px;
         }
-
         .tarjeta .leer-mas {
             color: #1a3b5d;
             font-weight: 600;
@@ -154,7 +129,6 @@ para mí
             text-decoration: underline;
             text-underline-offset: 3px;
         }
-
         .formulario {
             background: #ffffff;
             border-radius: 16px;
@@ -162,13 +136,11 @@ para mí
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border-left: 6px solid #FFB800;
         }
-
         .formulario h2 {
             color: #1a3b5d;
             font-size: 1.8em;
             margin-bottom: 20px;
         }
-
         .formulario label {
             display: block;
             font-weight: 600;
@@ -176,7 +148,6 @@ para mí
             margin-top: 15px;
             margin-bottom: 5px;
         }
-
         .formulario input,
         .formulario textarea {
             width: 100%;
@@ -188,19 +159,16 @@ para mí
             transition: border-color 0.3s ease;
             background: #fafafa;
         }
-
         .formulario input:focus,
         .formulario textarea:focus {
             outline: none;
             border-color: #FFB800;
             background: white;
         }
-
         .formulario textarea {
             height: 150px;
             resize: vertical;
         }
-
         .formulario .btn-publicar {
             background: #FFB800;
             color: #1a3b5d;
@@ -215,14 +183,12 @@ para mí
             box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
             width: 100%;
         }
-
         .formulario .btn-publicar:hover {
             background: #1a3b5d;
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(26, 59, 93, 0.3);
         }
-
         .mensaje {
             padding: 12px 20px;
             border-radius: 12px;
@@ -230,27 +196,22 @@ para mí
             font-weight: 600;
             display: none;
         }
-
         .mensaje.exito {
             background: #d1fae5;
             color: #065f46;
             display: block;
         }
-
         .mensaje.error {
             background: #fee2e2;
             color: #991b1b;
             display: block;
         }
-
         .vista {
             display: none;
         }
-
         .vista.activa {
             display: block;
         }
-
         @media (max-width: 600px) {
             .header h1 {
                 font-size: 2em;
@@ -279,9 +240,7 @@ para mí
     </style>
 </head>
 <body>
-
     <div class="container">
-
         <!-- VISTA 1: GALERÍA -->
         <div id="vistaGaleria" class="vista activa">
             <div class="header">
@@ -307,31 +266,25 @@ para mí
                         ← Volver
                     </button>
                 </div>
-
                 <form id="formHistoria">
                     <label for="titulo">📌 Título</label>
                     <input type="text" id="titulo" placeholder="Ej: El cliente influyente" required />
-
                     <label for="autor">✍️ Tu nombre</label>
                     <input type="text" id="autor" placeholder="Ej: Yrak Emilio" required />
-
                     <label for="historia">📖 Tu historia</label>
                     <textarea id="historia" placeholder="Escribe aquí tu anécdota..." required></textarea>
-
                     <button type="submit" class="btn-publicar">
                         📤 Publicar historia
                     </button>
                 </form>
-
                 <div id="mensaje" class="mensaje"></div>
             </div>
         </div>
-
     </div>
 
     <script>
         // =============================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN - ACTUALIZA CON TU URL
         // =============================================
         const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1syp8Ry3QUtGst-5ZCWiJkqZ7wwvnEsecDrWqgTf5Dfg/export?format=csv';
         const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
@@ -431,7 +384,7 @@ para mí
         }
 
         // =============================================
-        // ENVÍO DEL FORMULARIO (VERSIÓN CORREGIDA)
+        // ENVÍO DEL FORMULARIO - VERSIÓN CORREGIDA
         // =============================================
         document.getElementById('formHistoria').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -459,7 +412,6 @@ para mí
                 year: new Date().getFullYear()
             };
 
-            // === CAMBIO IMPORTANTE: Ya no usamos 'no-cors' ===
             fetch(WEBAPP_URL, {
                     method: 'POST',
                     headers: {
@@ -467,7 +419,12 @@ para mí
                     },
                     body: JSON.stringify(datos)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         mensajeDiv.className = 'mensaje exito';
@@ -496,6 +453,5 @@ para mí
             cargarHistorias();
         };
     </script>
-
 </body>
 </html>
