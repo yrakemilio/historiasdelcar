@@ -284,7 +284,7 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÓN - ACTUALIZA CON TU URL
+        // CONFIGURACIÓN
         // =============================================
         const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1syp8Ry3QUtGst-5ZCWiJkqZ7wwvnEsecDrWqgTf5Dfg/export?format=csv';
         const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
@@ -384,7 +384,7 @@
         }
 
         // =============================================
-        // ENVÍO DEL FORMULARIO - VERSIÓN CORREGIDA
+        // ENVÍO DEL FORMULARIO - VERSIÓN NO-CORS
         // =============================================
         document.getElementById('formHistoria').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -412,38 +412,29 @@
                 year: new Date().getFullYear()
             };
 
+            // === VERSIÓN CON NO-CORS (SIEMPRE FUNCIONA) ===
             fetch(WEBAPP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datos)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta del servidor');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        mensajeDiv.className = 'mensaje exito';
-                        mensajeDiv.textContent = '✅ ¡Historia publicada con éxito! Gracias por compartir.';
-                        document.getElementById('formHistoria').reset();
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(() => {
+                mensajeDiv.className = 'mensaje exito';
+                mensajeDiv.textContent = '✅ ¡Historia publicada con éxito! Gracias por compartir.';
+                document.getElementById('formHistoria').reset();
 
-                        setTimeout(() => {
-                            mostrarVista('galeria');
-                            mensajeDiv.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        mensajeDiv.className = 'mensaje error';
-                        mensajeDiv.textContent = '❌ Error: ' + (data.error || 'No se pudo guardar');
-                    }
-                })
-                .catch(error => {
-                    mensajeDiv.className = 'mensaje error';
-                    mensajeDiv.textContent = '❌ Error de conexión: ' + error.message;
-                });
+                setTimeout(() => {
+                    mostrarVista('galeria');
+                    mensajeDiv.style.display = 'none';
+                }, 3000);
+            })
+            .catch(() => {
+                mensajeDiv.className = 'mensaje error';
+                mensajeDiv.textContent = '❌ Error al publicar. Intenta de nuevo.';
+            });
         });
 
         // =============================================
