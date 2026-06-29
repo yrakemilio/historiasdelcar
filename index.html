@@ -122,6 +122,13 @@
             color: #9ca3af;
             margin-top: 4px;
         }
+        .tarjeta .leer-mas {
+            color: #1a3b5d;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
         .formulario {
             background: #ffffff;
             border-radius: 16px;
@@ -277,9 +284,8 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÓN - ¡ACTUALIZA ESTA URL DEL CSV!
+        // CONFIGURACIÓN - ¡ACTUALIZA ESTA URL!
         // =============================================
-        const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTykbjHKPJHaOjCeH9w2o92T-RTz57ir7MJl-6UPUaYp6ik_yDg-plhDNYS_z7A76JiyYxJXnzp_S7E/pub?output=csv';
         const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
 
         // =============================================
@@ -297,20 +303,28 @@
         }
 
         // =============================================
-        // CARGAR HISTORIAS (CON CSV)
+        // CARGAR HISTORIAS DESDE EL WEB APP
         // =============================================
         function cargarHistorias() {
             const contenedor = document.getElementById('listaHistorias');
             contenedor.innerHTML = '<p style="text-align:center; color:#6b7280; padding:40px 0;">⏳ Cargando historias...</p>';
 
-            fetch(SHEETS_CSV_URL)
+            // Usar el Web App para leer (GET)
+            fetch(WEBAPP_URL)
                 .then(response => {
-                    if (!response.ok) throw new Error('Error al cargar');
-                    return response.text();
+                    if (!response.ok) {
+                        throw new Error('Error al cargar las historias');
+                    }
+                    return response.json();
                 })
-                .then(csv => {
-                    const filas = csv.split('\n').filter(row => row.trim() !== '');
-                    if (filas.length <= 1) {
+                .then(data => {
+                    // Si hay un error en la respuesta
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Si no hay historias o es un array vacío
+                    if (!data || data.length === 0) {
                         contenedor.innerHTML = `
                             <div style="text-align:center; padding:40px 20px; color:#6b7280;">
                                 <p>📭 No hay historias aún.</p>
@@ -320,48 +334,47 @@
                         return;
                     }
 
-                    const datos = filas.slice(1).map(fila => {
-                        const columnas = fila.split(',').map(col => col.trim());
-                        return {
-                            no: columnas[0] || '',
-                            titulo: columnas[1] || 'Sin título',
-                            historia: columnas[2] || '',
-                            autor: columnas[3] || 'Anónimo',
-                            year: columnas[4] || ''
-                        };
-                    });
-
+                    // Mostrar las historias (más reciente primero)
                     let html = '';
-                    datos.reverse().forEach(historia => {
-                        // MOSTRAR LA HISTORIA COMPLETA (sin límite)
-                        const textoHistoria = historia.historia || '';
-                        const titulo = historia.titulo || 'Sin título';
-                        const autor = historia.autor || 'Anónimo';
-                        const year = historia.year || '2026';
+                    data.reverse().forEach(historia => {
+                        let textoHistoria = historia.historia || '';
+                        let leerMas = '';
+                        if (textoHistoria.length > 300) {
+                            const historiaCompleta = textoHistoria.replace(/'/g, "\\'");
+                            textoHistoria = textoHistoria.substring(0, 300) + '...';
+                            leerMas = ` <span class="leer-mas" onclick="alert('${historiaCompleta}')">Leer más</span>`;
+                        }
 
                         html += `
                             <div class="tarjeta">
-                                <div class="titulo"><span class="hashtag">#</span>${titulo}</div>
+                                <div class="titulo"><span class="hashtag">#</span>${historia.titulo || 'Sin título'}</div>
                                 <div class="contenido">
-                                    ${textoHistoria}
+                                    ${textoHistoria}${leerMas}
                                 </div>
-                                <div class="autor">${autor}</div>
-                                <div class="year">📅 ${year}</div>
+                                <div class="autor">${historia.autor || 'Anónimo'}</div>
+                                <div class="year">📅 ${historia.year || '2026'}</div>
                             </div>
                         `;
                     });
 
                     contenedor.innerHTML = html;
                 })
-                .catch(() => {
+                .catch(error => {
+                    console.error('Error:', error);
                     contenedor.innerHTML = `
                         <div style="text-align:center; padding:20px; color:#6b7280; background:#fff3cd; border-radius:12px; margin-bottom:20px;">
-                            ⚠️ No se pudieron cargar las historias. Mostrando ejemplos.
+                            ⚠️ No se pudieron cargar las historias. Error: ${error.message}
                         </div>
                         <div class="tarjeta">
                             <div class="titulo"><span class="hashtag">#</span>ClienteInfluyente</div>
                             <div class="contenido">Hace algún tiempo me llamó un cliente de Valle de Bravo...</div>
                             <div class="autor">Yrak Emilio</div>
+                            <div class="year">📅 2026</div>
+                        </div>
+                        <div class="tarjeta">
+                            <div class="titulo"><span class="hashtag">#</span>ElApagónDivertido</div>
+                            <div class="contenido">Estaba atendiendo una llamada cuando de repente se fue la luz...</div>
+                            <div class="autor">María Pérez</div>
                             <div class="year">📅 2026</div>
                         </div>
                     `;
@@ -397,6 +410,7 @@
                 year: new Date().getFullYear()
             };
 
+            // Enviar al Web App (POST)
             fetch(WEBAPP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
