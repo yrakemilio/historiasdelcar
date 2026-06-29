@@ -284,10 +284,9 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN - ¡ACTUALIZA ESTA URL!
         // =============================================
-       const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1syp8Ry3QUtGst-S7CWiJkqZ7wvvnEsecDrWqgTf5Dfg/export?format=csv';
-        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbx8Xf_QjvdythJG0CRGO9bBPhjb2Qs1H7Bzw-tBIRSZQViyT-yP49RO3Qkoi1vQ7DMH/exec';
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
 
         // =============================================
         // CAMBIAR ENTRE VISTAS
@@ -304,20 +303,28 @@
         }
 
         // =============================================
-        // CARGAR HISTORIAS
+        // CARGAR HISTORIAS DESDE EL WEB APP
         // =============================================
         function cargarHistorias() {
             const contenedor = document.getElementById('listaHistorias');
             contenedor.innerHTML = '<p style="text-align:center; color:#6b7280; padding:40px 0;">⏳ Cargando historias...</p>';
 
-            fetch(SHEETS_CSV_URL)
+            // Usar el Web App para leer (GET)
+            fetch(WEBAPP_URL)
                 .then(response => {
-                    if (!response.ok) throw new Error('Error al cargar');
-                    return response.text();
+                    if (!response.ok) {
+                        throw new Error('Error al cargar las historias');
+                    }
+                    return response.json();
                 })
-                .then(csv => {
-                    const filas = csv.split('\n').filter(row => row.trim() !== '');
-                    if (filas.length <= 1) {
+                .then(data => {
+                    // Si hay un error en la respuesta
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Si no hay historias o es un array vacío
+                    if (!data || data.length === 0) {
                         contenedor.innerHTML = `
                             <div style="text-align:center; padding:40px 20px; color:#6b7280;">
                                 <p>📭 No hay historias aún.</p>
@@ -327,34 +334,24 @@
                         return;
                     }
 
-                    const datos = filas.slice(1).map(fila => {
-                        const columnas = fila.split(',').map(col => col.trim());
-                        return {
-                            no: columnas[0] || '',
-                            titulo: columnas[1] || 'Sin título',
-                            historia: columnas[2] || '',
-                            autor: columnas[3] || 'Anónimo',
-                            year: columnas[4] || ''
-                        };
-                    });
-
+                    // Mostrar las historias (más reciente primero)
                     let html = '';
-                    datos.reverse().forEach(historia => {
-                        let textoHistoria = historia.historia;
+                    data.reverse().forEach(historia => {
+                        let textoHistoria = historia.historia || '';
                         let leerMas = '';
                         if (textoHistoria.length > 300) {
-                            const historiaCompleta = historia.historia.replace(/'/g, "\\'");
+                            const historiaCompleta = textoHistoria.replace(/'/g, "\\'");
                             textoHistoria = textoHistoria.substring(0, 300) + '...';
                             leerMas = ` <span class="leer-mas" onclick="alert('${historiaCompleta}')">Leer más</span>`;
                         }
 
                         html += `
                             <div class="tarjeta">
-                                <div class="titulo"><span class="hashtag">#</span>${historia.titulo}</div>
+                                <div class="titulo"><span class="hashtag">#</span>${historia.titulo || 'Sin título'}</div>
                                 <div class="contenido">
                                     ${textoHistoria}${leerMas}
                                 </div>
-                                <div class="autor">${historia.autor}</div>
+                                <div class="autor">${historia.autor || 'Anónimo'}</div>
                                 <div class="year">📅 ${historia.year || '2026'}</div>
                             </div>
                         `;
@@ -362,10 +359,11 @@
 
                     contenedor.innerHTML = html;
                 })
-                .catch(() => {
+                .catch(error => {
+                    console.error('Error:', error);
                     contenedor.innerHTML = `
                         <div style="text-align:center; padding:20px; color:#6b7280; background:#fff3cd; border-radius:12px; margin-bottom:20px;">
-                            ⚠️ No se pudieron cargar las historias. Mostrando ejemplos.
+                            ⚠️ No se pudieron cargar las historias. Error: ${error.message}
                         </div>
                         <div class="tarjeta">
                             <div class="titulo"><span class="hashtag">#</span>ClienteInfluyente</div>
@@ -384,7 +382,7 @@
         }
 
         // =============================================
-        // ENVÍO DEL FORMULARIO - VERSIÓN NO-CORS
+        // ENVÍO DEL FORMULARIO
         // =============================================
         document.getElementById('formHistoria').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -412,7 +410,7 @@
                 year: new Date().getFullYear()
             };
 
-            // === VERSIÓN CON NO-CORS (SIEMPRE FUNCIONA) ===
+            // Enviar al Web App (POST)
             fetch(WEBAPP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
