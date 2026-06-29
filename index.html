@@ -122,13 +122,6 @@
             color: #9ca3af;
             margin-top: 4px;
         }
-        .tarjeta .leer-mas {
-            color: #1a3b5d;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
         .formulario {
             background: #ffffff;
             border-radius: 16px;
@@ -286,7 +279,7 @@
         // =============================================
         // CONFIGURACIÓN - ¡ACTUALIZA ESTA URL!
         // =============================================
-        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbx8Xf_QjvdythJG0CRGO9bBPhjb2Qs1H7Bzw-tBIRSZQViyT-yP49RO3Qkoi1vQ7DMH/exec';
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
 
         // =============================================
         // CAMBIAR ENTRE VISTAS
@@ -303,13 +296,12 @@
         }
 
         // =============================================
-        // CARGAR HISTORIAS DESDE EL WEB APP
+        // CARGAR HISTORIAS (VERSIÓN COMPLETA - SIN CORTAR)
         // =============================================
         function cargarHistorias() {
             const contenedor = document.getElementById('listaHistorias');
             contenedor.innerHTML = '<p style="text-align:center; color:#6b7280; padding:40px 0;">⏳ Cargando historias...</p>';
 
-            // Usar el Web App para leer (GET)
             fetch(WEBAPP_URL)
                 .then(response => {
                     if (!response.ok) {
@@ -318,12 +310,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Si hay un error en la respuesta
                     if (data.error) {
                         throw new Error(data.error);
                     }
                     
-                    // Si no hay historias o es un array vacío
                     if (!data || data.length === 0) {
                         contenedor.innerHTML = `
                             <div style="text-align:center; padding:40px 20px; color:#6b7280;">
@@ -334,25 +324,23 @@
                         return;
                     }
 
-                    // Mostrar las historias (más reciente primero)
                     let html = '';
+                    // Mostrar todas las historias (más reciente primero)
                     data.reverse().forEach(historia => {
-                        let textoHistoria = historia.historia || '';
-                        let leerMas = '';
-                        if (textoHistoria.length > 300) {
-                            const historiaCompleta = textoHistoria.replace(/'/g, "\\'");
-                            textoHistoria = textoHistoria.substring(0, 300) + '...';
-                            leerMas = ` <span class="leer-mas" onclick="alert('${historiaCompleta}')">Leer más</span>`;
-                        }
+                        // Mostrar la historia COMPLETA sin límite
+                        const textoHistoria = historia.historia || '';
+                        const titulo = historia.titulo || 'Sin título';
+                        const autor = historia.autor || 'Anónimo';
+                        const year = historia.year || '2026';
 
                         html += `
                             <div class="tarjeta">
-                                <div class="titulo"><span class="hashtag">#</span>${historia.titulo || 'Sin título'}</div>
+                                <div class="titulo"><span class="hashtag">#</span>${titulo}</div>
                                 <div class="contenido">
-                                    ${textoHistoria}${leerMas}
+                                    ${textoHistoria}
                                 </div>
-                                <div class="autor">${historia.autor || 'Anónimo'}</div>
-                                <div class="year">📅 ${historia.year || '2026'}</div>
+                                <div class="autor">${autor}</div>
+                                <div class="year">📅 ${year}</div>
                             </div>
                         `;
                     });
@@ -369,12 +357,6 @@
                             <div class="titulo"><span class="hashtag">#</span>ClienteInfluyente</div>
                             <div class="contenido">Hace algún tiempo me llamó un cliente de Valle de Bravo...</div>
                             <div class="autor">Yrak Emilio</div>
-                            <div class="year">📅 2026</div>
-                        </div>
-                        <div class="tarjeta">
-                            <div class="titulo"><span class="hashtag">#</span>ElApagónDivertido</div>
-                            <div class="contenido">Estaba atendiendo una llamada cuando de repente se fue la luz...</div>
-                            <div class="autor">María Pérez</div>
                             <div class="year">📅 2026</div>
                         </div>
                     `;
