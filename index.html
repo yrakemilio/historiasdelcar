@@ -105,8 +105,6 @@
             line-height: 1.7;
             color: #374151;
             margin-bottom: 8px;
-            white-space: pre-wrap; /* Respeta los saltos de línea */
-            word-wrap: break-word;
         }
         .tarjeta .autor {
             font-size: 0.95em;
@@ -123,6 +121,13 @@
             font-size: 0.85em;
             color: #9ca3af;
             margin-top: 4px;
+        }
+        .tarjeta .leer-mas {
+            color: #1a3b5d;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
         .formulario {
             background: #ffffff;
@@ -298,12 +303,13 @@
         }
 
         // =============================================
-        // CARGAR HISTORIAS - SIN LÍMITE DE CARACTERES
+        // CARGAR HISTORIAS DESDE EL WEB APP
         // =============================================
         function cargarHistorias() {
             const contenedor = document.getElementById('listaHistorias');
             contenedor.innerHTML = '<p style="text-align:center; color:#6b7280; padding:40px 0;">⏳ Cargando historias...</p>';
 
+            // Usar el Web App para leer (GET)
             fetch(WEBAPP_URL)
                 .then(response => {
                     if (!response.ok) {
@@ -312,10 +318,12 @@
                     return response.json();
                 })
                 .then(data => {
+                    // Si hay un error en la respuesta
                     if (data.error) {
                         throw new Error(data.error);
                     }
                     
+                    // Si no hay historias o es un array vacío
                     if (!data || data.length === 0) {
                         contenedor.innerHTML = `
                             <div style="text-align:center; padding:40px 20px; color:#6b7280;">
@@ -326,26 +334,25 @@
                         return;
                     }
 
+                    // Mostrar las historias (más reciente primero)
                     let html = '';
                     data.reverse().forEach(historia => {
-                        // =============================================
-                        // CAMBIO IMPORTANTE: Mostrar historia COMPLETA
-                        // Ya NO hay límite de 300 caracteres
-                        // Ya NO hay botón "Leer más"
-                        // =============================================
-                        const textoHistoria = historia.historia || '';
-                        const titulo = historia.titulo || 'Sin título';
-                        const autor = historia.autor || 'Anónimo';
-                        const year = historia.year || '2026';
+                        let textoHistoria = historia.historia || '';
+                        let leerMas = '';
+                        if (textoHistoria.length > 300) {
+                            const historiaCompleta = textoHistoria.replace(/'/g, "\\'");
+                            textoHistoria = textoHistoria.substring(0, 300) + '...';
+                            leerMas = ` <span class="leer-mas" onclick="alert('${historiaCompleta}')">Leer más</span>`;
+                        }
 
                         html += `
                             <div class="tarjeta">
-                                <div class="titulo"><span class="hashtag">#</span>${titulo}</div>
+                                <div class="titulo"><span class="hashtag">#</span>${historia.titulo || 'Sin título'}</div>
                                 <div class="contenido">
-                                    ${textoHistoria}
+                                    ${textoHistoria}${leerMas}
                                 </div>
-                                <div class="autor">${autor}</div>
-                                <div class="year">📅 ${year}</div>
+                                <div class="autor">${historia.autor || 'Anónimo'}</div>
+                                <div class="year">📅 ${historia.year || '2026'}</div>
                             </div>
                         `;
                     });
@@ -403,6 +410,7 @@
                 year: new Date().getFullYear()
             };
 
+            // Enviar al Web App (POST)
             fetch(WEBAPP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
