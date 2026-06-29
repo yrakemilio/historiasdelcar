@@ -339,7 +339,7 @@
                     data.reverse().forEach(historia => {
                         let textoHistoria = historia.historia || '';
                         let leerMas = '';
-                        if (textoHistoria.length > 300) {
+                        if (textoHistoria.length > 3000) {
                             const historiaCompleta = textoHistoria.replace(/'/g, "\\'");
                             textoHistoria = textoHistoria.substring(0, 300) + '...';
                             leerMas = ` <span class="leer-mas" onclick="alert('${historiaCompleta}')">Leer más</span>`;
