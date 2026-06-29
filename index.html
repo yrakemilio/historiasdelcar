@@ -277,8 +277,9 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÓN - ¡ACTUALIZA ESTA URL!
+        // CONFIGURACIÓN
         // =============================================
+        const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTykbjHKPJHaOjCeH9w2o92T-RTz57ir7MJl-6UPUaYp6ik_yDg-plhDNYS_z7A76JiyYxJXnzp_S7E/pub?output=csv';
         const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxHOOM_BZIMPqQ7WD1jvHR70zr0h0DHDt8rNNjQB33c0_kz2D4Y6kpl7esjqQ/exec';
 
         // =============================================
@@ -296,25 +297,20 @@
         }
 
         // =============================================
-        // CARGAR HISTORIAS (VERSIÓN COMPLETA - SIN CORTAR)
+        // CARGAR HISTORIAS (CON CSV, SIN CORTAR TEXTO)
         // =============================================
         function cargarHistorias() {
             const contenedor = document.getElementById('listaHistorias');
             contenedor.innerHTML = '<p style="text-align:center; color:#6b7280; padding:40px 0;">⏳ Cargando historias...</p>';
 
-            fetch(WEBAPP_URL)
+            fetch(SHEETS_CSV_URL)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al cargar las historias');
-                    }
-                    return response.json();
+                    if (!response.ok) throw new Error('Error al cargar');
+                    return response.text();
                 })
-                .then(data => {
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-                    
-                    if (!data || data.length === 0) {
+                .then(csv => {
+                    const filas = csv.split('\n').filter(row => row.trim() !== '');
+                    if (filas.length <= 1) {
                         contenedor.innerHTML = `
                             <div style="text-align:center; padding:40px 20px; color:#6b7280;">
                                 <p>📭 No hay historias aún.</p>
@@ -324,10 +320,20 @@
                         return;
                     }
 
+                    const datos = filas.slice(1).map(fila => {
+                        const columnas = fila.split(',').map(col => col.trim());
+                        return {
+                            no: columnas[0] || '',
+                            titulo: columnas[1] || 'Sin título',
+                            historia: columnas[2] || '',
+                            autor: columnas[3] || 'Anónimo',
+                            year: columnas[4] || ''
+                        };
+                    });
+
                     let html = '';
-                    // Mostrar todas las historias (más reciente primero)
-                    data.reverse().forEach(historia => {
-                        // Mostrar la historia COMPLETA sin límite
+                    datos.reverse().forEach(historia => {
+                        // Mostrar la historia COMPLETA sin límite de caracteres
                         const textoHistoria = historia.historia || '';
                         const titulo = historia.titulo || 'Sin título';
                         const autor = historia.autor || 'Anónimo';
@@ -347,11 +353,10 @@
 
                     contenedor.innerHTML = html;
                 })
-                .catch(error => {
-                    console.error('Error:', error);
+                .catch(() => {
                     contenedor.innerHTML = `
                         <div style="text-align:center; padding:20px; color:#6b7280; background:#fff3cd; border-radius:12px; margin-bottom:20px;">
-                            ⚠️ No se pudieron cargar las historias. Error: ${error.message}
+                            ⚠️ No se pudieron cargar las historias. Mostrando ejemplos.
                         </div>
                         <div class="tarjeta">
                             <div class="titulo"><span class="hashtag">#</span>ClienteInfluyente</div>
@@ -392,7 +397,6 @@
                 year: new Date().getFullYear()
             };
 
-            // Enviar al Web App (POST)
             fetch(WEBAPP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
